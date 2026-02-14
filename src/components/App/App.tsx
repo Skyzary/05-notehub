@@ -1,4 +1,4 @@
-import SearchBox from '../SearchBox/SerachBox' // Исправлена опечатка в имени файла
+import SearchBox from '../SearchBox/SerachBox'
 import { useState } from 'react'
 import css from './App.module.css'
 import { useQuery } from '@tanstack/react-query'
@@ -10,8 +10,9 @@ import NoteList from '../NoteList/NoteList'
 import NoteForm from '../NoteForm/NoteForm'
 import Modal from '../Modal/Modal'
 import { addNote } from '../../services/noteService'
-import Pagination from '../Pagination/Pagination' // Импортируем компонент Pagination
-
+import Pagination from '../Pagination/Pagination'
+import Error from '../Error/Error'
+import { BarLoader } from 'react-spinners'
 export default function App() {
   const [page, setPage] = useState(1)
   const [localQuery, setLocalQuery] = useState('')
@@ -84,6 +85,13 @@ export default function App() {
           />
         </Modal>
       )}
+      {isError && <Error message={(error as Error).message} />}
+      {isLoading || isFetching ? (
+        <BarLoader
+          color="#2341ba"
+          area-label="Loading notes..."
+        />
+      ) : null}
     </div>
   )
 }
