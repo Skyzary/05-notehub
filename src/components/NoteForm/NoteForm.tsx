@@ -35,8 +35,11 @@ export default function NoteForm({ onNoteSaved, onCancel }: NoteFormProps) {
     <Formik
       initialValues={{ title: '', content: '', tag: 'Todo' }}
       onSubmit={(values, { setSubmitting }) => {
-        createMutation.mutate(values as NoteCreationPayload)
-        setSubmitting(false)
+        createMutation.mutate(values as NoteCreationPayload, {
+          onSettled: () => {
+            setSubmitting(false)
+          },
+        })
       }}
       validationSchema={noteSchema}
     >
@@ -95,7 +98,7 @@ export default function NoteForm({ onNoteSaved, onCancel }: NoteFormProps) {
             className={css.submitButton}
             disabled={createMutation.isPending}
           >
-            {createMutation.isPending ? 'Saving...' : 'Save'}
+            {createMutation.isPending ? 'Creating...' : 'Create Note'}
           </button>
           <button
             type="button"
@@ -110,4 +113,5 @@ export default function NoteForm({ onNoteSaved, onCancel }: NoteFormProps) {
     </Formik>
   )
 }
+
 

@@ -6,7 +6,7 @@ interface Response {
 }
 const params = {
   baseURL: 'https://notehub-public.goit.study/api/',
-  endpoits: {
+  endpoints: {
     notes: '/notes',
   },
 }
@@ -20,7 +20,7 @@ export async function getNotes(
   query?: string,
   page: number = 0,
 ): Promise<Response> {
-  const { data } = await instance.get<Response>(params.endpoits.notes, {
+  const { data } = await instance.get<Response>(params.endpoints.notes, {
     params: {
       ...(query ? { search: query } : {}),
       page: page,
@@ -29,11 +29,11 @@ export async function getNotes(
   return data
 }
 export async function addNote(note: NoteCreationPayload): Promise<Note> {
-  const { data } = await instance.post<Note>(params.endpoits.notes, note)
+  const { data } = await instance.post<Note>(params.endpoints.notes, note)
   return data
 }
 export async function deleteNote(id: string): Promise<Note> {
-  const res = await instance.delete<Note>(`${params.endpoits.notes}/${id}`)
+  const res = await instance.delete<Note>(`${params.endpoints.notes}/${id}`)
   return res.data
 }
 
