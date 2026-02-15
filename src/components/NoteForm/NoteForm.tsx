@@ -1,7 +1,10 @@
 import css from './NoteForm.module.css'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
-import type { Note } from '../../types/note'
+import type { Note, NoteCreationPayload } from '../../types/note'
 import * as Yup from 'yup'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { addNote } from '../../services/noteService'
+
 const noteSchema = Yup.object().shape({
   title: Yup.string()
     .required('Title is required')
@@ -17,14 +20,24 @@ export default function NoteForm({
   onNoteSaved,
   onCancel,
 }: {
-  onNoteSaved?: (values: Note) => void
+  onNoteSaved?: () => void
   onCancel?: () => void
 }) {
+  const queryClient = useQueryClient()
+  const createMutation = useMutation({
+    mutationFn: addNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] })
+      onNoteSaved?.()
+    },
+  })
+
   return (
     <Formik
       initialValues={{ title: '', content: '', tag: 'Todo' }}
-      onSubmit={(values) => {
-        onNoteSaved?.(values as Note)
+      onSubmit={(values, { setSubmitting }) => {
+        createMutation.mutate(values as NoteCreationPayload)
+        setSubmitting(false)
       }}
       validationSchema={noteSchema}
     >
@@ -81,13 +94,15 @@ export default function NoteForm({
           <button
             type="submit"
             className={css.submitButton}
+            disabled={createMutation.isPending}
           >
-            Save
+            {createMutation.isPending ? 'Creating...' : 'Create Note'}
           </button>
           <button
             type="button"
             className={css.cancelButton}
             onClick={onCancel}
+            disabled={createMutation.isPending}
           >
             Cancel
           </button>

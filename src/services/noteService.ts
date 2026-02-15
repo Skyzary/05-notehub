@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Note } from '../types/note'
+import type { Note, NoteCreationPayload } from '../types/note'
 interface response {
   notes: Note[]
   totalPages: number
@@ -28,11 +28,13 @@ export async function getNotes(
   })
   return data
 }
-export async function addNote(note: Note) {
+export async function addNote(note: NoteCreationPayload) {
   const { data } = await instance.post<Note>(params.endpoits.notes, note)
   return data
 }
-export async function deleteNote(id: number) {
-  await instance.delete(`${params.endpoits.notes}/${id}`)
-  return id
+export async function deleteNote(id: string) {
+  const res = await instance.delete<Note>(`${params.endpoits.notes}/${id}`)
+  return res.data
 }
+
+
