@@ -16,19 +16,18 @@ const noteSchema = Yup.object().shape({
     .oneOf(['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'], 'Invalid tag'),
 })
 
-export default function NoteForm({
-  onNoteSaved,
-  onCancel,
-}: {
-  onNoteSaved?: () => void
-  onCancel?: () => void
-}) {
+interface NoteFormProps {
+  onNoteSaved: () => void
+  onCancel: () => void
+}
+
+export default function NoteForm({ onNoteSaved, onCancel }: NoteFormProps) {
   const queryClient = useQueryClient()
   const createMutation = useMutation({
     mutationFn: addNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] })
-      onNoteSaved?.()
+      onNoteSaved()
     },
   })
 
@@ -96,7 +95,7 @@ export default function NoteForm({
             className={css.submitButton}
             disabled={createMutation.isPending}
           >
-            {createMutation.isPending ? 'Creating...' : 'Create Note'}
+            {createMutation.isPending ? 'Saving...' : 'Save'}
           </button>
           <button
             type="button"
@@ -111,3 +110,4 @@ export default function NoteForm({
     </Formik>
   )
 }
+

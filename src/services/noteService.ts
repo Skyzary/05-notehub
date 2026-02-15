@@ -1,6 +1,6 @@
 import axios from 'axios'
 import type { Note, NoteCreationPayload } from '../types/note'
-interface response {
+interface Response {
   notes: Note[]
   totalPages: number
 }
@@ -19,8 +19,8 @@ const instance = axios.create({
 export async function getNotes(
   query?: string,
   page: number = 0,
-): Promise<response> {
-  const { data } = await instance.get<response>(params.endpoits.notes, {
+): Promise<Response> {
+  const { data } = await instance.get<Response>(params.endpoits.notes, {
     params: {
       ...(query ? { search: query } : {}),
       page: page,
@@ -28,11 +28,11 @@ export async function getNotes(
   })
   return data
 }
-export async function addNote(note: NoteCreationPayload) {
+export async function addNote(note: NoteCreationPayload): Promise<Note> {
   const { data } = await instance.post<Note>(params.endpoits.notes, note)
   return data
 }
-export async function deleteNote(id: string) {
+export async function deleteNote(id: string): Promise<Note> {
   const res = await instance.delete<Note>(`${params.endpoits.notes}/${id}`)
   return res.data
 }
